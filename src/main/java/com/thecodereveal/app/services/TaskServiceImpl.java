@@ -1,0 +1,81 @@
+package com.thecodereveal.app.services;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.Optional;
+
+import javax.management.RuntimeErrorException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.thecodereveal.app.entities.TaskDetails;
+import com.thecodereveal.app.mapper.TaskMapper;
+import com.thecodereveal.app.repository.TaskRepository;
+import com.thecodereveal.model.Task;
+import com.thecodereveal.model.TaskStatus;
+
+import javassist.NotFoundException;
+
+@Service
+public class TaskServiceImpl implements TaskService {
+	
+	@Autowired
+	TaskMapper taskMapper;
+	
+	@Autowired
+	TaskRepository taskRepository;
+
+	@Override
+	public Task createTask(Task task) {
+		TaskDetails taskDetails = taskMapper.convertToTaskDetails(task);
+		
+		return taskMapper.convertToTaskDto(taskRepository.save(taskDetails));
+		
+	}
+
+	@Override
+	public void deleteTask(Long id) throws NotFoundException {
+		Optional<TaskDetails> taskDetails=taskRepository.findById(id);
+		
+		if(!taskDetails.isPresent()) {
+			throw new NotFoundException("No task found with id "+id);
+		}
+		
+		TaskDetails task=taskDetails.get();
+		//task.setTaskStatus(TaskStatus.DELETED);
+		taskRepository.delete(task);
+		
+		
+	}
+
+	@Override
+	public Task getTasks(Long id) {
+		Optional<TaskDetails> taskDetails=taskRepository.findById(id);
+		
+		if(taskDetails.isPresent()) {
+			return taskMapper.convertToTaskDto(taskDetails.get());
+		}
+		return null;
+	}
+
+	@Override
+	public Task updateTask(Long id, Task task) throws NotFoundException {
+		Optional<TaskDetails> taskDetails=taskRepository.findById(id);
+		
+		if(taskDetails.isPresent()) {
+			TaskDetails taskDetailsUpdate=taskMapper.convertToTaskDetails(task);
+			taskDetailsUpdate.setId(id);
+			return taskMapper.convertToTaskDto(taskRepository.save(taskDetailsUpdate));
+		}
+		
+		throw new NotFoundException("No task found with id "+id);
+	}
+
+	@Override
+	public List<Task> getAllTasks() {
+		
+		return taskMapper.convertToTaskList(taskRepository.findAll());
+	}
+
+}
