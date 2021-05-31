@@ -25,7 +25,6 @@ public class TaskControllerImpl implements TaskApi {
 	private TaskService taskService;
 	
 	@Override
-	@Transactional
 	public ResponseEntity<Task> createTask(@Valid Task task) {
 		try {
 			Task taskResponse=taskService.createTask(task);
@@ -37,7 +36,6 @@ public class TaskControllerImpl implements TaskApi {
 	}
 
 	@Override
-	@Transactional
 	public ResponseEntity<Task> deleteTask(Integer id) {
 		try {
 			Long taskId=(Long)id.longValue();
@@ -71,7 +69,6 @@ public class TaskControllerImpl implements TaskApi {
 	}
 
 	@Override
-	@Transactional
 	public ResponseEntity<Task> updateTask(Integer id, @Valid Task task) {
 		try {
 			Long taskId=(Long)id.longValue();

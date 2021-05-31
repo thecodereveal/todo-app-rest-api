@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.management.RuntimeErrorException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class TaskServiceImpl implements TaskService {
 	TaskRepository taskRepository;
 
 	@Override
+	@Transactional
 	public Task createTask(Task task) {
 		TaskDetails taskDetails = taskMapper.convertToTaskDetails(task);
 		
@@ -35,6 +37,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteTask(Long id) throws NotFoundException {
 		Optional<TaskDetails> taskDetails=taskRepository.findById(id);
 		
@@ -60,6 +63,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
+	@Transactional
 	public Task updateTask(Long id, Task task) throws NotFoundException {
 		Optional<TaskDetails> taskDetails=taskRepository.findById(id);
 		
